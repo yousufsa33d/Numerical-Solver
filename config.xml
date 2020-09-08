@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns   = "http://www.w3.org/ns/widgets"
+    xmlns:gap   = "http://phonegap.com/ns/1.0"
+    id          = "com.zakyou.numericalSolver"
+    versionCode = "10"
+    version     = "1.0.0" >
+
+<!-- versionCode is optional and Android only -->
+
+  <name>Numerical Solver</name>
+
+  <description>
+      Solves Numerical Stepwise.
+  </description>
+
+  <author email="yousuf.sa33d@gmail.com">
+      Yousuf Saeed
+  </author>
+
+</widget>

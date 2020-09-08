@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Solver</title>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.mobile-1.4.5.js"></script>
+    <script src="js/numerical.js"></script>
+    <script type="text/javascript" id="MathJax-script" async src="js/mathjax/es5/startup.js"></script>
+    <script>
+        MathJax = {
+            loader: { load: [ 'input/asciimath', 'output/chtml' ] }
+        }
+    </script>
+    <script src="js/math.min.js"></script>
+    <script>
+        math.config({
+            number: 'BigNumber',      // Default type of number:
+            // 'number' (default), 'BigNumber', or 'Fraction'
+            precision: 64            // Number of significant digits for BigNumbers
+        })
+    </script>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+    <style>
+        .m-0-heading {
+            margin: 0;
+        }
+
+        .m-0 {
+            margin: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        .mt-1 {
+            margin-top: 5px;
+        }
+
+        .ui-mini {
+            margin-top: .2em;
+            margin-bottom: .2em;
+        }
+
+        .my-auto {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .text-black {
+            color: black;
+        }
+
+        .border-danger {
+            border-color: red !important;
+        }
+
+        .text-danger {
+            color: red;
+        }
+
+        .text-decoration-none {
+            text-decoration: none;
+        }
+
+        .custom-input-box {
+            border: 0.5px solid #ddd;
+            font-size: 14px;
+            padding: 7px;
+            min-height: 2.4em;
+        }
+
+        .custom-input-box-popup {
+            border: 0.5px solid #ddd;
+            font-size: 14px;
+            padding: 7px;
+            min-height: 1.7em;
+        }
+
+        .custom-input-box-focused {
+            -webkit-box-shadow: 0 0 12px #3388cc;
+            -moz-box-shadow: 0 0 12px #3388cc;
+            box-shadow: 0 0 12px #3388cc;
+        }
+
+
+
+        /* Left transition */
+        li.left {
+            -webkit-transition: -webkit-transform 250ms ease;
+            -webkit-transform: translateX(-100%);
+            -moz-transition: -moz-transform 250ms ease;
+            -moz-transform: translateX(-100%);
+            -o-transition: -o-transform 250ms ease;
+            -o-transform: translateX(-100%);
+            transition: transform 250ms ease;
+            transform: translateX(-100%);
+        }
+
+        /* Right transition */
+        li.right {
+            -webkit-transition: -webkit-transform 250ms ease;
+            -webkit-transform: translateX(100%);
+            -moz-transition: -moz-transform 250ms ease;
+            -moz-transform: translateX(100%);
+            -o-transition: -o-transform 250ms ease;
+            -o-transform: translateX(100%);
+            transition: transform 250ms ease;
+            transform: translateX(100%);
+        }
+
+        /* Border bottom for the previous button during the transition*/
+        li.left a.ui-btn,
+        li.right a.ui-btn {
+            border-top-width: 0;
+            border-left-width: 1px;
+            border-right-width: 1px;
+        }
+
+        li a.ui-btn.border-bottom {
+            border-bottom-width: 1px;
+        }
+
+        /* Hide the delete button on touch devices */
+        ul.touch li.ui-li-has-alt a.delete {
+            display: none;
+        }
+
+        ul.touch li.ui-li-has-alt a.ui-btn {
+            margin-right: 0;
+        }
+
+        /* Styling for the popup */
+        #confirm p {
+            text-align: center;
+            font-size: inherit;
+            margin-bottom: .75em;
+        }
+    </style>
+</head>
+
+<body>
+    <div data-role="page" id='mainpage'>
+        <div data-role="header" data-position="fixed">
+            <h1 class="ui-title" role="heading" aria-level="1">Numerical Solver</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <div class="ui-body ui-body-a ui-corner-all" id="inputDataBox">
+                <h4 class="m-0-heading text-center">Input Data</h4>
+                <hr>
+                <input type="checkbox" data-role="flipswitch" id="valueKnownFlipSwitch" data-on-text="x=?"
+                    data-off-text="x=..." data-wrapper-class="custom-label-flipswitch" data-mini="true">
+                <div id="valueIsKnownBox" data-transition="slideup">
+                    <div class="ui-field-contain">
+                        <label for="knownData-button">Data:</label>
+                        <div id="knownData-button" data-value="noValue"
+                            class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow ui-mini">
+                            <span>--Select Data--</span>
+                        </div>
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="valueInputBox">Value:</label>
+                        <div class="ui-corner-all custom-input-box" id="valueInputBox" data-value=""></div>
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="knownUnit-button">Unit:</label>
+                        <div id="knownUnit-button" data-value="noValue"
+                            class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow ui-mini">
+                            <span>--Select Unit--</span>
+                        </div>
+                    </div>
+                    <div class="d-none" id="knownAlert">
+                        <p class="text-danger">Something is missing. Please check and try again.</p>
+                    </div>
+                    <button class="ui-btn ui-mini m-0" role="button" id="knownAddDataBtn">Add Data</button>
+                </div>
+                <div id="valueIsUnknownBox" data-transition="slideup" class="d-none">
+                    <div class="ui-field-contain">
+                        <label for="unknownData-button">Data:</label>
+                        <div id="unknownData-button" data-value="noValue"
+                            class="ui-btn ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow ui-mini">
+                            <span>--Select Data--</span>
+                        </div>
+                    </div>
+                    <div class="d-none" id="unknownAlert">
+                        <p class="text-danger">Something is missing. Please check and try again.</p>
+                    </div>
+                    <button class="ui-btn ui-mini m-0" role="button" id="unknownAddDataBtn">Add Data</button>
+                </div>
+            </div>
+            <div class="ui-body ui-body-a mt-1 ui-corner-all" id="DataBox">
+                <h4 class="m-0-heading text-center">Data</h4>
+                <hr>
+                <ul id="data" data-role="listview" data-icon='false'>
+                    <li>
+                        <a>
+                            <p class="text-center">`No\ Data`</p>
+                        </a>
+                    </li>
+                </ul>
+                <button class="ui-btn ui-mini" role="button" style="margin: 0px; margin-top:23px"
+                    id="solveBtn">Solve</button>
+            </div>
+            <div class="ui-body ui-body-a mt-1 ui-corner-all d-none" id="solutionBox">
+                <h4 class="m-0-heading text-center">Solution</h4>
+                <hr>
+                <ul id="solution" data-role="listview" data-icon='false'>
+                </ul>
+                <button class="ui-btn ui-mini" role="button" style="margin: 0px; margin-top:23px"
+                    id="solveanotherBtn">Solve another numerical</button>
+            </div>
+        </div>
+
+        <!-- pop up -->
+
+        <div id="confirm" class="ui-content" data-role="popup" data-theme="a">
+            <p id="question">Are you sure you want to delete:</p>
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a id="yes" class="ui-btn ui-corner-all ui-mini ui-btn-a" data-rel="back">Yes</a>
+                </div>
+                <div class="ui-block-b">
+                    <a id="cancel" class="ui-btn ui-corner-all ui-mini ui-btn-a" data-rel="back">Cancel</a>
+                </div>
+            </div>
+        </div><!-- /popup -->
+        <!-- pop up -->
+
+        <div id="selectPopUp" class="ui-content" data-role="popup" data-overlay-theme="b" data-theme="a"
+            style="min-width: 200px; max-height: 400px; overflow: auto;">
+            <ul data-role="listview" id="dataList" data-icon="false" data-autodividers="true" data-filter="true">
+            </ul>
+        </div><!-- /popup -->
+
+        <!-- pop up -->
+        <div id="unitSelectPopup" class="ui-content" data-role="popup" data-overlay-theme="b" data-theme="a"
+            style="min-width: 200px; max-height: 400px; overflow: auto;">
+            <ul data-role="listview" id="unitList" data-icon="false">
+                <li>Data is missing</li>
+            </ul>
+        </div><!-- /popup -->
+
+
+        <!-- pop up keyboard -->
+
+        <div data-role="popup" id="keyboardpopup" data-overlay-theme="b" data-theme="a" data-dismissible="false"
+            style="min-width: 290px;">
+            <div role="main" class="ui-content">
+                <div class="ui-corner-all custom-input-box-popup my-auto" id="valueInputBoxPopup" data-value='|'>`|`
+                </div>
+                <div class="ui-grid-d">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardSevenBtn">7</button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardEightBtn">8</button></div>
+                    <div class="ui-block-c"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardNineBtn">9</button></div>
+                    <div class="ui-block-d"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardAllClearBtn">AC</button></div>
+                    <div class="ui-block-e"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardClearBtn">C</button></div>
+                </div>
+                <div class="ui-grid-d">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardFourBtn">4</button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardFiveBtn">5</button></div>
+                    <div class="ui-block-c"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardSixBtn">6</button></div>
+                    <div class="ui-block-d"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardMinusBtn">-</button></div>
+                    <div class="ui-block-e"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardMultiplyBtn">x</button></div>
+                </div>
+                <div class="ui-grid-d">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardOneBtn">1</button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardTwoBtn">2</button></div>
+                    <div class="ui-block-c"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardThreeBtn">3</button></div>
+                    <div class="ui-block-d"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardRootBtn">&#8730;</button></div>
+                    <div class="ui-block-e"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardXpowerBtn">x<sup>n</sup></button></div>
+                </div>
+                <div class="ui-grid-d">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardZeroBtn">0</button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardDotBtn">.</button></div>
+                    <div class="ui-block-c"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardPieBtn">&#928;</button></div>
+                    <div class="ui-block-d"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardLeftArrowBtn">
+                            < </button>
+                    </div>
+                    <div class="ui-block-e"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardRightArrowBtn">></button></div>
+                </div>
+                <div class="ui-grid-c">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardTenPowerBtn">x10<sup>n</sup></button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardCosBtn">cos</button></div>
+                    <div class="ui-block-c"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardTanBtn">tan</button></div>
+                    <div class="ui-block-d"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardLogBtn">log</button></div>
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="KeyboardDoneBtn">Done</button></div>
+                    <div class="ui-block-b"><button class="ui-btn ui-shadow ui-corner-all ui-mini"
+                            id="keyboardCancelBtn">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- popup -->
+        <div data-role="popup" id="alreadyExistsPopUp" data-overlay-theme="b" data-theme="b">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+            <div role="main" class="ui-content">
+                <p><span id="alreadyExistsData"></span> is Already Exists.</p>
+                <p>Swipe Data for delete and try again</p>
+            </div>
+        </div>
+
+
+        <div data-role="popup" id="errorPopup" data-overlay-theme="b" data-theme="b">
+            <a href="#" data-rel="back"
+                class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+            <div role="main" class="ui-content">
+                <p id="errorDetail"></p>
+            </div>
+        </div>
+    </div>
+    <script src="js/jqueryIndex.js"></script>
+    <script src="js/keyboard.js"></script>
+    <script src="js/select.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/solve.js"></script>
+</body>
+
+</html>
