@@ -5,25 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Numerical Solver</title>
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery.mobile-1.4.5.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.min.js"></script>
+    <!-- <script type="text/javascript" id="MathJax-script" async src="js/mathjax/es5/startup.js"></script> -->
+    <script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
     <script src="js/numerical.js"></script>
-    <script type="text/javascript" id="MathJax-script" async src="js/mathjax/es5/startup.js"></script>
     <script>
         MathJax = {
             loader: { load: [ 'input/asciimath', 'output/chtml' ] }
         }
-    </script>
-    <script src="js/math.min.js"></script>
-    <script>
-        math.config({
-            number: 'BigNumber',      // Default type of number:
-            // 'number' (default), 'BigNumber', or 'Fraction'
-            precision: 64            // Number of significant digits for BigNumbers
-        })
-    </script>
-    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
-    <style>
+        </script>
+    <!-- css -->
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <stylse>
         .m-0-heading {
             margin: 0;
         }
@@ -147,7 +146,7 @@
             font-size: inherit;
             margin-bottom: .75em;
         }
-    </style>
+    </stylse>
 </head>
 
 <body>

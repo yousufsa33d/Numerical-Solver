@@ -726,7 +726,6 @@ class Numerical {
     expr = expr.replace(/xx/g, "*");
     expr = expr.replace(/tan\^\(-1\)/g, "atan");
     expr = expr.replace(/cos\^\(-1\)/g, "acos");
-    console.log(expr);
     let ans = math.evaluate(expr).toString();
     if (ans.includes("e")) {
       ans = Number(ans);
@@ -794,8 +793,6 @@ class Numerical {
             }
           }
         }
-        console.log(expr);
-        // alert('')
         step = step.replace(`#${expr}#`, Numerical.evaluate(expr));
       }
       html += `<li style="max-width: 100%; overflow-x: auto;"><strong>\`${step}\`</strong></li>`;
