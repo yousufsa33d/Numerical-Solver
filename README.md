@@ -9,3 +9,4 @@ It offers an intuitive and user-friendly interface for easy navigation. Supports
 Provides step-by-step calculation support.
 Includes a dedicated popup keyboard for inputting complex values.
 Automatically converts data into international units for ease of use.
+
